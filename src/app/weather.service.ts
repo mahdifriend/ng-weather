@@ -52,8 +52,9 @@ export class WeatherService {
                     this.currentConditionsSubject.next(newConditions);
                     this.cacheService.saveToCache(cacheKey, data)
                 }, error => {
-                    console.log(error.error.message);
-                    this.errorsHandler.next(error.error.message)
+                    if (error.error.message) {
+                        this.errorsHandler.next(error.error.message)
+                    }
                     this.locationService.removeLocation(zipcode);
                 });
         }

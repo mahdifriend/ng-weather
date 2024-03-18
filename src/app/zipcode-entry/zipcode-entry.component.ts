@@ -15,7 +15,6 @@ export class ZipcodeEntryComponent implements OnInit{
 
   ngOnInit(): void {
     this.weatherService.errorsHandler$.subscribe(error => {
-      console.log('error', error);
       this.error = error;
     })
   }
