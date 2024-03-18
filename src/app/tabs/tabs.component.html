@@ -1,0 +1,14 @@
+<div class="tabs-container">
+    <ul class="tabs-list">
+        <li *ngFor="let tab of tabs; let i = index"
+            [class.active]="tab.active"
+            class="btn-tab"
+            (click)="selectTab(i)">
+            {{ tab.title }}
+            <span class="close-tab" (click)="removeTab(i)">X</span>
+        </li>
+    </ul>
+    <div class="tab-content" *ngIf="activeTabIndex !== null">
+        <ng-container *ngTemplateOutlet="tabs[activeTabIndex].content; context: { $implicit: tabs[activeTabIndex].locationData }" (click)="selectTab(activeTabIndex)"></ng-container>
+    </div>
+</div>

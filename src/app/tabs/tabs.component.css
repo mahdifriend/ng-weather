@@ -1,0 +1,43 @@
+.close {
+    cursor: pointer;
+}
+
+.flex {
+    display: flex;
+    justify-content: space-between;
+}
+
+.tabs-container {
+    width: fit-content;
+}
+
+.tabs-list {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    column-gap: .5rem;
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 0;
+}
+
+.tab-content {
+    border: 1px solid black;
+    padding: 1.5rem;
+    width: calc(100% + 10rem);
+}
+
+.btn-tab {
+    background-color: #337ab7;
+    color: white;
+    padding: .6rem 2rem;
+    cursor: pointer;
+}
+
+.close-tab {
+    margin-left: .7rem;
+}
+
+.close-tab:hover {
+    color: red;
+}

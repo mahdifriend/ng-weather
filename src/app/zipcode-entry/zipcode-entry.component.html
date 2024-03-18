@@ -1,0 +1,10 @@
+<div class="well">
+    <h2>Enter a zipcode:</h2>
+    <input type="text" #zipcode placeholder="Zipcode" class="form-control">
+    <br>
+    <div class="alert-error" *ngIf="error">{{error}}</div>
+    <button class="btn btn-primary" (click)="addLocation(zipcode.value)">
+        Add location
+    </button>
+
+</div>
