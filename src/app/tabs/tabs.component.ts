@@ -34,7 +34,7 @@ export class TabsComponent {
     }
 
     selectTab(index: number): void {
-        if (this.activeTabIndex !== null) {
+        if (this.activeTabIndex !== null && this.tabs[this.activeTabIndex]) {
             this.tabs[this.activeTabIndex].active = false;
         }
         this.tabs[index].active = true;
@@ -43,6 +43,7 @@ export class TabsComponent {
 
     removeTab(index: number): void {
         let zipcode = this.tabs[index].zipCode;
+
         if (zipcode) {
             this.weatherService.removeCurrentConditions(zipcode);
             this.weatherService.removeForecast(zipcode);
@@ -50,6 +51,8 @@ export class TabsComponent {
             this.tabs.splice(index, 1);
             if (this.tabs.length > 0 && index === this.activeTabIndex) {
                 this.selectTab(0);
+            } else if (this.tabs.length > 0 && index !== this.activeTabIndex) {
+                this.selectTab(this.activeTabIndex);
             } else {
                 this.activeTabIndex = null;
             }

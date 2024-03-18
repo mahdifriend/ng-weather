@@ -16,15 +16,22 @@
     flex-direction: row;
     align-content: center;
     column-gap: .5rem;
+    row-gap: .5rem;
+    flex-wrap: wrap;
     list-style: none;
     padding-left: 0;
     margin-bottom: 0;
+}
+
+.tabs-list .active {
+    background-color: green;
 }
 
 .tab-content {
     border: 1px solid black;
     padding: 1.5rem;
     width: calc(100% + 10rem);
+    max-width: 96vw;
 }
 
 .btn-tab {
