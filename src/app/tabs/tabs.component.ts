@@ -1,13 +1,11 @@
-import {Component, inject} from '@angular/core';
-import {LocationService} from "../location.service";
-import {WeatherService} from "../weather.service";
+import {Component, EventEmitter, Output} from '@angular/core';
 
 interface Tab {
     title: string;
     zipCode: string;
     content: any; // Ce sera un TemplateRef ou tout autre contenu
     active: boolean;
-    locationData?: any;
+    data?: any;
 }
 
 @Component({
@@ -18,15 +16,14 @@ interface Tab {
 export class TabsComponent {
     tabs: Tab[] = [];
     activeTabIndex: number | null = null;
-    protected locationService = inject(LocationService);
-    protected weatherService = inject(WeatherService);
+    @Output() removeTabEvent = new EventEmitter<string>();
 
-    addTab(title: string, zipCode: string, content: any, locationData: any): void {
+    addTab(title: string, zipCode: string, content: any, data: any): void {
         // Check if an object with the same zip property exists
         var zipExists = this.tabs.some(obj => obj.zipCode === zipCode);
         // If zip doesn't exist, push the object into the array
         if (!zipExists) {
-            this.tabs.push({title, zipCode, content, active: false, locationData});
+            this.tabs.push({title, zipCode, content, active: false, data});
             if (this.activeTabIndex === null) {
                 this.selectTab(this.tabs.length - 1);
             }
@@ -34,8 +31,6 @@ export class TabsComponent {
     }
 
     selectTab(index: number): void {
-        console.log('selectTab', {activeTabIndex: this.activeTabIndex, index: index, tabs: this.tabs})
-
         if (this.activeTabIndex !== null && this.tabs[this.activeTabIndex]) {
             this.tabs[this.activeTabIndex].active = false;
         }
@@ -47,9 +42,6 @@ export class TabsComponent {
         let zipcode = this.tabs[index].zipCode;
 
         if (zipcode) {
-            this.weatherService.removeCurrentConditions(zipcode);
-            this.weatherService.removeForecast(zipcode);
-            this.locationService.removeLocation(zipcode);
             this.tabs.splice(index, 1);
 
             if (this.tabs[index]) {
@@ -63,6 +55,8 @@ export class TabsComponent {
             } else {
                 this.activeTabIndex = null;
             }
+
+            this.removeTabEvent.emit(zipcode);
         }
     }
 

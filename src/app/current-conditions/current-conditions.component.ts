@@ -12,9 +12,9 @@ import {TabsComponent} from "../tabs/tabs.component";
 })
 export class CurrentConditionsComponent implements AfterViewInit {
 
-    private weatherService = inject(WeatherService);
     private router = inject(Router);
     protected locationService = inject(LocationService);
+    private weatherService = inject(WeatherService);
     protected currentConditionsByZip: ConditionsAndZip[] = [];
 
     @ViewChild(TabsComponent) tabsComponent!: TabsComponent;
@@ -55,5 +55,12 @@ export class CurrentConditionsComponent implements AfterViewInit {
 
     showForecast(zipcode: string) {
         this.router.navigate(['/forecast', zipcode])
+    }
+
+
+    handleRemoveTab(zipcode) {
+        this.weatherService.removeCurrentConditions(zipcode);
+        this.weatherService.removeForecast(zipcode);
+        this.locationService.removeLocation(zipcode);
     }
 }

@@ -1,4 +1,4 @@
-<app-tabs #locationTabs></app-tabs>
+<app-tabs #locationTabs (removeTabEvent)="handleRemoveTab($event)"></app-tabs>
 
 <ng-template #tabContent let-location>
     <div class="well flex">

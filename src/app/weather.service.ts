@@ -48,7 +48,6 @@ export class WeatherService {
             this.errorsHandler.next('');
             this.http.get<CurrentConditions>(`${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`)
                 .subscribe(data => {
-                    console.log('data', data)
                     const newConditions = [...this.currentConditionsSubject.getValue(), {zip: zipcode, data}];
                     this.currentConditionsSubject.next(newConditions);
                     this.cacheService.saveToCache(cacheKey, data)

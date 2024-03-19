@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {CurrentConditions} from "./current-conditions/current-conditions.type";
+import {Forecast} from "./forecasts-list/forecast.type";
 
 
 @Injectable()
@@ -14,7 +16,7 @@ export class CacheService {
     }
 
     // Save data to cache
-    saveToCache(key: string, data: any): void {
+    saveToCache(key: string, data: CurrentConditions | Forecast): void {
         const cacheEntry = {
             timestamp: Date.now(),
             data: data
