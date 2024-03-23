@@ -1,5 +1,4 @@
 <app-tabs (removeTabEvent)="handleRemoveTab($event)">
-
     <app-tab [title]="location.data.name + '(' + location.zip + ')'" [isActive]="active"
              *ngFor="let location of currentConditionsByZip; let i = index">
         <div class="well flex">

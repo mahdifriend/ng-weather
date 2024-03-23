@@ -15,10 +15,10 @@ import {ConditionsAndZip} from '../conditions-and-zip.type';
 })
 export class CurrentConditionsComponent implements OnInit {
 
-    active: number = 0;
+    active: boolean = false;
     private router = inject(Router);
     protected locationService = inject(LocationService);
-    private weatherService = inject(WeatherService);
+    protected weatherService = inject(WeatherService);
     protected currentConditionsByZip: ConditionsAndZip[] = [];
 
     constructor(private cd: ChangeDetectorRef) {
@@ -28,7 +28,7 @@ export class CurrentConditionsComponent implements OnInit {
     ngOnInit(): void {
         this.weatherService.currentConditionsByZip$.subscribe(locations => {
             if (locations.length > 0) {
-                locations.map((location: ConditionsAndZip) => {
+                locations.map((location: ConditionsAndZip, index) => {
                     // Check if an object with the same zip property exists
                     var zipExists = this.currentConditionsByZip.some(obj => obj.zip === location.zip);
                     // If zip doesn't exist, push the object into the array
@@ -36,6 +36,7 @@ export class CurrentConditionsComponent implements OnInit {
                         this.currentConditionsByZip.push(location);
                     }
                 });
+                this.active = true;
             }
             // Déclencher manuellement la détection des changements
             this.cd.detectChanges();
