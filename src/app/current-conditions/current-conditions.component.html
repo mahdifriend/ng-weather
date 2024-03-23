@@ -1,21 +1,24 @@
-<app-tabs #locationTabs (removeTabEvent)="handleRemoveTab($event)"></app-tabs>
+<app-tabs (removeTabEvent)="handleRemoveTab($event)">
 
-<ng-template #tabContent let-location>
-    <div class="well flex">
-        <div class="weather-info">
-            <h3>{{ location?.name }} ({{ location?.zipCode }})</h3>
-            <h4>Current conditions: {{ location?.weather[0]?.main }}</h4>
-            <p>
-                Current {{ location?.main?.temp | number:'.0-0' }}
-                - Max {{ location?.main?.temp_max | number:'.0-0' }}
-                - Min {{ location?.main?.temp_min | number:'.0-0' }}
-            </p>
-            <p>
-                <a [routerLink]="['/forecast', location?.zipCode]">Show 5-day forecast for {{ location?.name }}</a>
-            </p>
+    <app-tab [title]="location.data.name + '(' + location.zip + ')'" [isActive]="active"
+             *ngFor="let location of currentConditionsByZip; let i = index">
+        <div class="well flex">
+            <div class="weather-info">
+                <h3>{{ location?.data?.name }} ({{ location?.zip }})</h3>
+                <h4>Current conditions: {{ location?.data?.weather[0]?.main }}</h4>
+                <p>
+                    Current {{ location?.data?.main?.temp | number:'.0-0' }}
+                    - Max {{ location?.data?.main?.temp_max | number:'.0-0' }}
+                    - Min {{ location?.data?.main?.temp_min | number:'.0-0' }}
+                </p>
+                <p>
+                    <a [routerLink]="['/forecast', location?.zip]">Show 5-day forecast
+                        for {{ location?.data?.name }}</a>
+                </p>
+            </div>
+            <div>
+                <img [src]="weatherService.getWeatherIcon(location?.data?.id)">
+            </div>
         </div>
-        <div>
-            <img [src]="weatherService.getWeatherIcon(location?.id)">
-        </div>
-    </div>
-</ng-template>
+    </app-tab>
+</app-tabs>

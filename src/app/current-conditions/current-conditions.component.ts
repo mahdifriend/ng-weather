@@ -1,56 +1,45 @@
-import {AfterViewInit, ChangeDetectorRef, Component, inject, TemplateRef, ViewChild} from '@angular/core';
+import {
+    ChangeDetectorRef,
+    Component,
+    inject, OnInit
+} from '@angular/core';
 import {WeatherService} from "../weather.service";
 import {LocationService} from "../location.service";
 import {Router} from "@angular/router";
 import {ConditionsAndZip} from '../conditions-and-zip.type';
-import {TabsComponent} from "../tabs/tabs.component";
 
 @Component({
     selector: 'app-current-conditions',
     templateUrl: './current-conditions.component.html',
     styleUrls: ['./current-conditions.component.css']
 })
-export class CurrentConditionsComponent implements AfterViewInit {
+export class CurrentConditionsComponent implements OnInit {
 
+    active: number = 0;
     private router = inject(Router);
     protected locationService = inject(LocationService);
     private weatherService = inject(WeatherService);
     protected currentConditionsByZip: ConditionsAndZip[] = [];
 
-    @ViewChild(TabsComponent) tabsComponent!: TabsComponent;
-    @ViewChild('tabContent') tabContentRef: TemplateRef<any>;
-
     constructor(private cd: ChangeDetectorRef) {
 
     }
 
-    ngAfterViewInit(): void {
+    ngOnInit(): void {
         this.weatherService.currentConditionsByZip$.subscribe(locations => {
-            this.currentConditionsByZip = locations;
-            if (this.currentConditionsByZip.length > 0) {
-                // Convertir les localisations en onglets
-                this.currentConditionsByZip.map((location: any) => {
-                    if (location) {
-                        this.addLocationTab(location);
+            if (locations.length > 0) {
+                locations.map((location: ConditionsAndZip) => {
+                    // Check if an object with the same zip property exists
+                    var zipExists = this.currentConditionsByZip.some(obj => obj.zip === location.zip);
+                    // If zip doesn't exist, push the object into the array
+                    if (!zipExists) {
+                        this.currentConditionsByZip.push(location);
                     }
                 });
             }
+            // Déclencher manuellement la détection des changements
+            this.cd.detectChanges();
         });
-
-        // Déclencher manuellement la détection des changements
-        this.cd.detectChanges();
-    }
-
-    // Méthode pour ajouter un onglet de localisation
-    addLocationTab(location: any) {
-        if (location && this.tabsComponent) {
-            this.tabsComponent.addTab(
-                `${location.data.name} (${location.zip})`,
-                location.zip,
-                this.tabContentRef,
-                {...location.data, zipCode: location.zip}
-            );
-        }
     }
 
     showForecast(zipcode: string) {
@@ -58,9 +47,13 @@ export class CurrentConditionsComponent implements AfterViewInit {
     }
 
 
-    handleRemoveTab(zipcode) {
-        this.weatherService.removeCurrentConditions(zipcode);
-        this.weatherService.removeForecast(zipcode);
-        this.locationService.removeLocation(zipcode);
+    handleRemoveTab(index) {
+        let selectedTab = this.currentConditionsByZip[index] || null;
+        if (selectedTab && selectedTab.zip) {
+            this.weatherService.removeCurrentConditions(selectedTab.zip);
+            this.weatherService.removeForecast(selectedTab.zip);
+            this.locationService.removeLocation(selectedTab.zip);
+            this.currentConditionsByZip.splice(index, 1);
+        }
     }
 }

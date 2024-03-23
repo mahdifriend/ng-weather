@@ -27,13 +27,6 @@
     background-color: green;
 }
 
-.tab-content {
-    border: 1px solid black;
-    padding: 1.5rem;
-    width: calc(100% + 10rem);
-    max-width: 96vw;
-}
-
 .btn-tab {
     background-color: #337ab7;
     color: white;

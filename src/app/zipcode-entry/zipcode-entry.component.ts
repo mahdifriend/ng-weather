@@ -9,7 +9,7 @@ import {WeatherService} from "../weather.service";
 export class ZipcodeEntryComponent implements OnInit{
 
   private weatherService = inject(WeatherService);
-  protected error: any = '';
+  protected error: string = '';
 
   constructor(private service : LocationService) { }
 

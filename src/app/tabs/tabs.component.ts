@@ -1,63 +1,34 @@
-import {Component, EventEmitter, Output} from '@angular/core';
-
-interface Tab {
-    title: string;
-    zipCode: string;
-    content: any; // Ce sera un TemplateRef ou tout autre contenu
-    active: boolean;
-    data?: any;
-}
+import {AfterContentInit, Component, ContentChildren, EventEmitter, Output, QueryList} from '@angular/core';
+import {TabComponent} from "./tab/tab.component";
 
 @Component({
     selector: 'app-tabs',
     templateUrl: './tabs.component.html',
     styleUrls: ['./tabs.component.css']
 })
-export class TabsComponent {
-    tabs: Tab[] = [];
-    activeTabIndex: number | null = null;
-    @Output() removeTabEvent = new EventEmitter<string>();
+export class TabsComponent implements AfterContentInit {
+    @ContentChildren(TabComponent) tabs: QueryList<TabComponent>;
+    @Output() removeTabEvent = new EventEmitter<number>();
 
-    addTab(title: string, zipCode: string, content: any, data: any): void {
-        // Check if an object with the same zip property exists
-        var zipExists = this.tabs.some(obj => obj.zipCode === zipCode);
-        // If zip doesn't exist, push the object into the array
-        if (!zipExists) {
-            this.tabs.push({title, zipCode, content, active: false, data});
-            if (this.activeTabIndex === null) {
-                this.selectTab(this.tabs.length - 1);
-            }
+    ngAfterContentInit() {
+        const activeTabs = this.tabs.filter(tab => tab.isActive);
+        if (activeTabs.length === 0) {
+            this.selectTab(0);
         }
     }
 
-    selectTab(index: number): void {
-        if (this.activeTabIndex !== null && this.tabs[this.activeTabIndex]) {
-            this.tabs[this.activeTabIndex].active = false;
-        }
-        this.tabs[index].active = true;
-        this.activeTabIndex = index;
+    selectTab(index: number) {
+        this.tabs.toArray().forEach((tab, i) => tab.isActive = i === index);
     }
 
-    removeTab(index: number): void {
-        let zipcode = this.tabs[index].zipCode;
-
-        if (zipcode) {
-            this.tabs.splice(index, 1);
-
-            if (this.tabs[index]) {
-                this.tabs[index].active = false;
-            }
-
-            if (this.tabs.length > 0 && index === this.activeTabIndex) {
-                this.selectTab(0);
-            } else if (this.tabs.length > 0 && index !== this.activeTabIndex) {
-                this.selectTab(this.activeTabIndex);
-            } else {
-                this.activeTabIndex = null;
-            }
-
-            this.removeTabEvent.emit(zipcode);
+    removeTab(index: number) {
+        const tabArray = this.tabs.toArray();
+        tabArray.splice(index, 1);
+        this.tabs.reset(tabArray);
+        if (tabArray.length > 0 && !tabArray.some(tab => tab.isActive)) {
+            this.selectTab(0);
         }
-    }
 
+        this.removeTabEvent.emit(index);
+    }
 }

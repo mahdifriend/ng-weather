@@ -40,7 +40,7 @@ export class WeatherService {
     addCurrentConditions(zipcode: string): void {
         // Here we make a request to get the current conditions data from the API. Note the use of backticks and an expression to insert the zipcode
         const cacheKey = `current-conditions-${zipcode}`;
-        const cachedData = this.cacheService.getFromCache(cacheKey);
+        const cachedData: CurrentConditions = this.cacheService.getFromCache<CurrentConditions>(cacheKey);
         if (cachedData) {
             const newConditions = [...this.currentConditionsSubject.getValue(), {zip: zipcode, data: cachedData}];
             this.currentConditionsSubject.next(newConditions);
@@ -50,7 +50,7 @@ export class WeatherService {
                 .subscribe(data => {
                     const newConditions = [...this.currentConditionsSubject.getValue(), {zip: zipcode, data}];
                     this.currentConditionsSubject.next(newConditions);
-                    this.cacheService.saveToCache(cacheKey, data)
+                    this.cacheService.saveToCache<CurrentConditions>(cacheKey, data)
                 }, error => {
                     if (error.error.message) {
                         this.errorsHandler.next(error.error.message)
@@ -77,14 +77,14 @@ export class WeatherService {
     getForecast(zipcode: string): Observable<Forecast> {
         // Here we make a request to get the forecast data from the API. Note the use of backticks and an expression to insert the zipcode
         const cacheKey = `forecast-${zipcode}`;
-        const cachedData = this.cacheService.getFromCache(cacheKey);
+        const cachedData: Forecast = this.cacheService.getFromCache<Forecast>(cacheKey);
         if (cachedData) {
             return of(cachedData);
         } else {
             return this.http
                 .get<Forecast>(`${WeatherService.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WeatherService.APPID}`)
                 .pipe(
-                    tap(data => this.cacheService.saveToCache(cacheKey, data))
+                    tap(data => this.cacheService.saveToCache<Forecast>(cacheKey, data))
                 );
         }
     }
@@ -107,14 +107,14 @@ export class WeatherService {
     }
 
     // Fonction pour obtenir les conditions actuelles avec la mise en cache
-    getCurrentConditions(zip: string): Observable<any> {
+    getCurrentConditions(zip: string): Observable<CurrentConditions> {
         const cacheKey = `current-conditions-${zip}`;
-        const cachedData = this.cacheService.getFromCache(cacheKey);
+        const cachedData: CurrentConditions = this.cacheService.getFromCache<CurrentConditions>(cacheKey);
         if (cachedData) {
             return of(cachedData); // RxJS 'of' to return an observable
         } else {
-            return this.http.get(`/api/current-conditions/${zip}`).pipe(
-                tap(data => this.cacheService.saveToCache(cacheKey, data))
+            return this.http.get<CurrentConditions>(`/api/current-conditions/${zip}`).pipe(
+                tap(data => this.cacheService.saveToCache<CurrentConditions>(cacheKey, data))
             );
         }
     }

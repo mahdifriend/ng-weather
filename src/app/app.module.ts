@@ -16,6 +16,7 @@ import {ServiceWorkerModule} from '@angular/service-worker';
 import {environment} from '../environments/environment';
 import {TabsComponent} from "./tabs/tabs.component";
 import {CacheService} from "./cache.service";
+import {TabComponent} from "./tabs/tab/tab.component";
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import {CacheService} from "./cache.service";
         ForecastsListComponent,
         CurrentConditionsComponent,
         MainPageComponent,
-        TabsComponent
+        TabsComponent,
+        TabComponent
     ],
     imports: [
         BrowserModule,

@@ -1,22 +1,18 @@
-import {Injectable} from '@angular/core';
-import {CurrentConditions} from "./current-conditions/current-conditions.type";
-import {Forecast} from "./forecasts-list/forecast.type";
-
+import { Injectable } from '@angular/core';
 
 @Injectable()
 export class CacheService {
     private cacheDuration = 7200; // Default cache duration in seconds (2 hours)
 
-    constructor() {
-    }
+    constructor() {}
 
     // Set the cache duration
     setCacheDuration(seconds: number): void {
         this.cacheDuration = seconds;
     }
 
-    // Save data to cache
-    saveToCache(key: string, data: CurrentConditions | Forecast): void {
+    // Save data to cache with a generic type
+    saveToCache<T>(key: string, data: T): void {
         const cacheEntry = {
             timestamp: Date.now(),
             data: data
@@ -24,15 +20,15 @@ export class CacheService {
         localStorage.setItem(key, JSON.stringify(cacheEntry));
     }
 
-    // Retrieve data from cache
-    getFromCache(key: string): any {
+    // Retrieve data from cache with a generic type
+    getFromCache<T>(key: string): T | null {
         const cacheEntry = localStorage.getItem(key);
         if (cacheEntry) {
             const parsedEntry = JSON.parse(cacheEntry);
             const now = Date.now();
             // Check if the cache is still valid
             if (now - parsedEntry.timestamp < this.cacheDuration * 1000) {
-                return parsedEntry.data;
+                return parsedEntry.data as T;
             } else {
                 localStorage.removeItem(key);
             }
@@ -41,7 +37,7 @@ export class CacheService {
     }
 
     // Remove data from cache
-    removeFromCache(key: string): any {
-        return localStorage.removeItem(key);
+    removeFromCache(key: string): void {
+        localStorage.removeItem(key);
     }
 }
